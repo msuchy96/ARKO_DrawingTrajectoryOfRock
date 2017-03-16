@@ -24,7 +24,7 @@ int main()
 	if( !obrazek)
 	{
 		set_gfx_mode( GFX_TEXT, 0, 0, 0, 0 );
-		allegro_message( "nie mogę załadować obrazu!" );
+		allegro_message( "Can't load the image!" );
 		allegro_exit();
 		return 1;
 	}
@@ -38,15 +38,15 @@ int main()
 	{
 		if(key[KEY_I])
 		{
-			printf("\n       Instrukcja: \n");
-			printf("\n Zwieksz kat - strzalka w gore \n");
-			printf("\n Zmniejsz kat - strzalka w dol \n");
-			printf("\n Zwieksz predkosc poczatkowa - strzalka w prawo \n");
-			printf("\n Zmniejsz predkosc poczatkowa - strzalka w dol \n");
-			printf("\n Zwieksz K -  przycisk W\n");
-			printf("\n Zmnijesz K -  przycisk S\n");
-			printf("\n Zwieksz K' -  przycisk D\n");
-			printf("\n Zmniejsz K' -  przycisk A\n");
+			printf("\n       Instruction: \n");
+			printf("\n Increase Rake Angle - UP \n");
+			printf("\n Decrease Rake Angle - DOWN \n");
+			printf("\n Increase Initial Speed - RIGHT \n");
+			printf("\n Decrease Initial Speed - LEFT \n");
+			printf("\n Increase K parameter - W\n");
+			printf("\n Decrease K parameter - S\n");
+			printf("\n Increase K' parameter - D\n");
+			printf("\n Decrease K' - A\n");
 
 			
 				
@@ -122,7 +122,7 @@ int main()
 		if(i)
 		{
 
-		printf("\n       Parametry: \n");
+		printf("\n       Parameters: \n");
 			printf("V_start: %lf \n", V_start);
 			printf("Kat: %lf \n", alpha);
 			printf("K: %lf \n", K_parameter);

@@ -1,15 +1,15 @@
-	; rsi - szerokość
-	; rdx - wysokość
+	; rsi - width
+	; rdx - height
 
 	; xmm0 - alpha
 	; xmm1 - K_parameter
 	; xmm2 - Kprim_parameter
 	; xmm3 - V_start
-	; xmm4 - przyciaganie
+	; xmm4 - gravity
 	; xmm5 - Vy
         ; xmm6 - Vx
-	; r12 - y poprzednie
-	; r13 - x poprzednie
+	; r12 - previous y 
+	; r13 - previous x 
 
 section .text
 	global parabola
@@ -18,7 +18,7 @@ parabola:
 	push rbp
 	mov rbp, rsp
 	
-					; skopiowanie wysokosci i szerokości
+					; width and height copied
 	mov r8, rsi
 	mov r9, rdx
 	
@@ -43,21 +43,21 @@ parabola:
 
 
 
-	;przesuniecie do wiersza
-	cvtsd2si r10, xmm5 		; konwersja Vy
+	;move to proper line
+	cvtsd2si r10, xmm5 		; Vy conversion
 	mov r12, r10
-	mov r15, rdi  			; r15 - poczatek bitmapy ( lewy górny )
-	sub r8, r10 			; r8 = 600 - Vy ( bo odwrotny uklad wspol)
-	shl r8, 3   			; razy 8 z racji 64 r8=r8*3
-	add r15,r8 			; przesuniesie do wiersza 
+	mov r15, rdi  			; r15 - beginning of bitmap  ( left top )
+	sub r8, r10 			; r8 = 600 - Vy ( reverse coordinate system )
+	shl r8, 3   			; multiplied by 8 because 64 r8=r8*3
+	add r15,r8 			; Shift to line
 	
 
-	;przesuniecie sie do kolumny
-	cvtsd2si r11, xmm6 		; konwersja Vx
+	;move to proper column
+	cvtsd2si r11, xmm6 		; Vx conversion
 	mov r13, r11
-	mov rbx, [r15] 			; rbx = aktuaalne miejsce w bitmapie
-	add rbx, r11   			; przesuwam sie po X rbx=rbx+Vx
-	mov al, 255			; rysowanie
+	mov rbx, [r15] 			; rbx = actual place in the bitmap
+	add rbx, r11   			; moving - X rbx=rbx+Vx
+	mov al, 255			; drawing
 	mov [rbx], al
 
 loop:
@@ -67,13 +67,13 @@ loop:
 	movsd xmm7, xmm5			;xmm7 = Vy_(n-1)
 	mulsd xmm7, xmm7			;xmm7 = (Vy_(n-1))^2
 	mulsd xmm7, xmm2			;xmm7 = (Vy_(n-1))^2 * K'
-	subsd xmm7, xmm4			;xmm7 = K'*(Vy_(n-1))^2 - przyciaganie
-        addsd xmm5, xmm7			;xmm5 = Vy_(n-1) - K'*(Vy_(n-1))^2 - przyciaganie
+	subsd xmm7, xmm4			;xmm7 = K'*(Vy_(n-1))^2 - gravity
+        addsd xmm5, xmm7			;xmm5 = Vy_(n-1) - K'*(Vy_(n-1))^2 - gravity
 
 	
 	
-	cvtsd2si r10, xmm5 			; konwersja Vy
-	add r10, r12				; nowy y = Vy + poprzedni y
+	cvtsd2si r10, xmm5 			;  Vy conversion
+	add r10, r12				;  new_y = Vy + previous_y
 	mov r12, r10			
 
 	cmp r10, 0				; if(Vy<0) -> end
@@ -94,14 +94,14 @@ loop:
 	subsd xmm6, xmm8			;xmm6 = = Vx_(n-1) - K*(Vx_(n-1))^2
 
 	cvtsd2si r11, xmm6
-	add r11, r13			; nowy x = Vx + poprzedni x
+	add r11, r13			; new_x = Vx + previous_x
 	mov r13, r11
 	
 	
 
-	mov rbx, [r15] 			; rbx = aktuaalne miejsce w bitmapie
-	add rbx, r11   			; przesuwam sie po X rbx=rbx+Vx
-	mov al, 255			; rysowanie
+	mov rbx, [r15] 			; rbx = actual place in the bitmap
+	add rbx, r11   			; moving - X rbx=rbx+Vx
+	mov al, 255			; drawing
 	mov [rbx], al	
 
 	cmp r11,0
